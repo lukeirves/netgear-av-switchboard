@@ -7,11 +7,13 @@
   },
   "scripts": {
     "dev": "vinext dev",
+    "collector": "node --env-file-if-exists=collector/.env collector/server.mjs",
     "build": "vinext build",
     "start": "vinext start",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
   },
   "dependencies": {
+    "net-snmp": "^3.26.3",
     "next": "16.2.6",
     "react": "19.2.6",
     "react-dom": "19.2.6"
