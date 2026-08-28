@@ -7,7 +7,8 @@ logDir = root & "\logs"
 shell.CurrentDirectory = root
 If Not files.FolderExists(logDir) Then files.CreateFolder(logDir)
 
-If Not files.FolderExists(root & "\node_modules") Then
+If Not files.FileExists(root & "\node_modules\.bin\vinext.cmd") Then
+  If files.FolderExists(root & "\node_modules") Then files.DeleteFolder root & "\node_modules", True
   installCode = shell.Run("cmd.exe /c npm install > ""logs\install.log"" 2>&1", 0, True)
   If installCode <> 0 Then
     MsgBox "Switchboard could not install its required components. Make sure Node.js LTS is installed. Details are in logs\install.log.", 16, "NETGEAR AV Switchboard"
