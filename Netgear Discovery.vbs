@@ -1,5 +1,5 @@
 Option Explicit
-Dim shell, files, root, logDir, installCode, buildCode, firstRun, collectorReady, dashboardReady
+Dim shell, files, root, logDir, installCode, buildCode, firstRun, collectorReady, dashboardReady, trayCommand
 Set shell = CreateObject("WScript.Shell")
 Set files = CreateObject("Scripting.FileSystemObject")
 root = files.GetParentFolderName(WScript.ScriptFullName)
@@ -7,24 +7,24 @@ logDir = root & "\logs"
 shell.CurrentDirectory = root
 If Not files.FolderExists(logDir) Then files.CreateFolder(logDir)
 
-If Not files.FileExists(root & "\node_modules\.bin\vinext.cmd") Then
+If Not files.FileExists(root & "\node_modules\.bin\next.cmd") Then
   If files.FolderExists(root & "\node_modules") Then files.DeleteFolder root & "\node_modules", True
   installCode = shell.Run("cmd.exe /c npm install > ""logs\install.log"" 2>&1", 0, True)
   If installCode <> 0 Then
-    MsgBox "Switchboard could not install its required components. Make sure Node.js LTS is installed. Details are in logs\install.log.", 16, "NETGEAR AV Switchboard"
+    MsgBox "Netgear Discovery could not install its required components. Make sure Node.js LTS is installed. Details are in logs\install.log.", 16, "Netgear Discovery"
     WScript.Quit installCode
   End If
 End If
 
 buildCode = shell.Run("cmd.exe /c npm run build > ""logs\dashboard-build.log"" 2>&1", 0, True)
 If buildCode <> 0 Then
-  MsgBox "The dashboard could not be prepared. Details are in logs\dashboard-build.log.", 16, "NETGEAR AV Switchboard"
+  MsgBox "The dashboard could not be prepared. Details are in logs\dashboard-build.log.", 16, "Netgear Discovery"
   WScript.Quit buildCode
 End If
 
 firstRun = Not files.FileExists(root & "\collector\.env")
-shell.Run "cmd.exe /c npm run collector > ""logs\collector.log"" 2>&1", 0, False
-shell.Run "cmd.exe /c npm run start -- --port 3000 > ""logs\dashboard.log"" 2>&1", 0, False
+trayCommand = "powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File """ & root & "\scripts\switchboard-tray.ps1"""
+shell.Run trayCommand, 0, False
 
 collectorReady = WaitForUrl("http://localhost:8787/api/health", 30)
 dashboardReady = WaitForUrl("http://localhost:3000", 45)
@@ -34,10 +34,10 @@ If firstRun And collectorReady Then
 ElseIf dashboardReady Then
   shell.Run "http://localhost:3000"
 ElseIf collectorReady Then
-  MsgBox "The collector started, but the dashboard did not. Double-click Switchboard again. If it still fails, check logs\dashboard.log.", 48, "NETGEAR AV Switchboard"
+  MsgBox "The collector started, but the dashboard did not. Double-click Netgear Discovery again. If it still fails, check logs\dashboard.log.", 48, "Netgear Discovery"
   shell.Run "http://localhost:8787/setup"
 Else
-  MsgBox "Switchboard could not start. Check the files in the logs folder for details.", 16, "NETGEAR AV Switchboard"
+  MsgBox "Netgear Discovery could not start. Check the files in the logs folder for details.", 16, "Netgear Discovery"
 End If
 
 Function UrlReady(url)

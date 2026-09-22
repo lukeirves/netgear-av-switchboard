@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ConfigPath = Join-Path $ProjectRoot "collector\.env"
-Write-Host "NETGEAR AV Switchboard setup" -ForegroundColor Cyan
+Write-Host "Netgear Discovery setup" -ForegroundColor Cyan
 $Subnet = Read-Host "Management subnet [10.1.0.0/24]"
 if ([string]::IsNullOrWhiteSpace($Subnet)) { $Subnet = "10.1.0.0/24" }
 $SourceAddress = Read-Host "IP of the Windows adapter connected to the switch network (leave blank for automatic routing)"

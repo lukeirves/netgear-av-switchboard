@@ -29,6 +29,10 @@ yarn-error.log*
 # local environment
 .env*
 !collector/.env.example
+collector/discovery-cache.json
+collector/color-scheme.json
+!collector/discovery-cache.json.example
+collector/discovery-cache.json
 
 # deployment and generated files
 .vercel
@@ -38,3 +42,6 @@ next-env.d.ts
 /outputs/
 /work/
 /logs/
+/installer/build/
+/installer/downloads/
+/installer-output/
